@@ -119,3 +119,12 @@ When the protocol is not triggered:
 - "Add loading and mutation handling to this React card component."
 - "Refactor this component so it stops owning query and effect logic."
 - "Before you add another `useEffect`, ascend the logic into a custom hook."
+
+## Reference Example
+For a complete, annotated walkthrough of this protocol in action, see the [Reference Readme](./README.md).
+
+| File | Role | Description |
+| :--- | :--- | :--- |
+| [before.tsx](./references/before.tsx) | Trigger Edge | A ProductCard at the maximum allowed complexity before ascension. |
+| [after-hook.ts](./references/after-hook.ts) | Domain Hook | The ascended `useCartActions` hook owning all business logic. |
+| [after-component.tsx](./references/after-component.tsx) | Presentation | The refactored `ProductCard` focused only on rendering. |
