@@ -33,10 +33,10 @@ Skills in Sia are independently managed and can be installed via [Agent Skill Po
 
 | Name | Purpose | Status |
 | :--- | :--- | :--- |
-| `Scribe-Sentinel` | Prevents component hook bloat & enforces complexity thresholds. | `Example` |
+| `Hook-Ascender` | Enforces presentation-first React components by moving logic to custom hooks. | `Official` |
 
-### Example: Scribe-Sentinel
-`Scribe-Sentinel` is a specialized skill that monitors React component hooks. It prevents agents from exceeding a predefined line-of-code threshold in `useMemo`, `useEffect`, or custom hooks, ensuring your components remain lean and maintainable.
+### Example: Hook-Ascender
+`Hook-Ascender` is a specialized skill that monitors React component complexity. It prevents components from becoming bloated by ensuring non-trivial hook logic (queries, mutations, derived state) is ascended into domain-named custom hooks, keeping the UI focused on presentation.
 
 ---
 

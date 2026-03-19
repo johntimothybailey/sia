@@ -1,0 +1,17 @@
+{
+  "name": "@sia/hook-ascender",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Enforces presentation-first React components by moving non-trivial hook logic into custom hooks.",
+  "scripts": {
+    "lint": "echo 'No linting configured for this package yet'"
+  },
+  "keywords": [
+    "agentic-skill",
+    "react",
+    "hooks",
+    "refactoring"
+  ],
+  "author": "Sia",
+  "license": "MIT"
+}
