@@ -4,7 +4,7 @@ This walkthrough demonstrates the **Hook-Ascender Protocol** using a standard E-
 
 ## The Trigger Scenario
 
-In [before.tsx](./references/before.tsx), we have a component that is currently at the "trigger edge." It contains exactly two trivial `useState` hooks:
+In [before.tsx](./references/basic/before.tsx), we have a component that is currently at the "trigger edge." It contains exactly two trivial `useState` hooks:
 
 ```tsx
 const [isExpanded, setIsExpanded] = useState(false);
@@ -18,7 +18,7 @@ While this is clean, an incoming feature request for **real-time inventory** and
 Instead of bloating the component, we **ascend** the logic into a domain-named custom hook.
 
 ### 1. The Domain Hook: `useCartActions`
-We created [after-hook.ts](./references/after-hook.ts). Note that it is named for the **business domain** (Cart Actions), not the component (Product Card).
+We created [after-hook.ts](./references/basic/after-hook.ts). Note that it is named for the **business domain** (Cart Actions), not the component (Product Card).
 
 | Concerns Moved | Why? |
 | :--- | :--- |
@@ -28,7 +28,7 @@ We created [after-hook.ts](./references/after-hook.ts). Note that it is named fo
 | **Complexity** | It keeps the component tree shallow and testable. |
 
 ### 2. The Presentation-First Component
-We refactored the component in [after-component.tsx](./references/after-component.tsx).
+We refactored the component in [after-component.tsx](./references/basic/after-component.tsx).
 
 The component now consumes a single, clean interface:
 
