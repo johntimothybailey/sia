@@ -1,0 +1,19 @@
+{
+  "name": "sia-monorepo",
+  "private": true,
+  "packageManager": "bun@1.2.19",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "changeset": "changeset",
+    "changeset:release": "changeset version && changeset publish"
+  },
+  "devDependencies": {
+    "turbo": "latest",
+    "@changesets/cli": "latest"
+  }
+}
