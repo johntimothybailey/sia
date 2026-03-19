@@ -128,3 +128,4 @@ For a complete, annotated walkthrough of this protocol in action, see the [Refer
 | [before.tsx](./references/before.tsx) | Trigger Edge | A ProductCard at the maximum allowed complexity before ascension. |
 | [after-hook.ts](./references/after-hook.ts) | Domain Hook | The ascended `useCartActions` hook owning all business logic. |
 | [after-component.tsx](./references/after-component.tsx) | Presentation | The refactored `ProductCard` focused only on rendering. |
+| [Advanced Pattern](./references/advanced/) | Principal | Decomposed pattern using specialized hooks and a coordinator. |
