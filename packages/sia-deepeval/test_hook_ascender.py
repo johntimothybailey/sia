@@ -50,10 +50,13 @@ def test_hook_ascender_relevancy():
         pytest.fail("No LLM API key found. Set OPENAI_API_KEY, GROQ_API_KEY, or GEMINI_API_KEY in your .env.local at the root.")
 
     # Load requirements and references
-    # Note: relative paths work here because pytest runs from the package dir
-    skill_instructions = read_file('../hook-ascender/SKILL.md')
-    source_code = read_file('../hook-ascender/references/basic/before.tsx')
-    actual_output = read_file('../hook-ascender/references/basic/after-component.tsx')
+    # Note: Use absolute paths resolved from the location of this test file
+    pkg_dir = os.path.dirname(os.path.abspath(__file__))
+    ref_dir = os.path.join(pkg_dir, "..", "hook-ascender", "references", "basic")
+    
+    skill_instructions = read_file(os.path.join(pkg_dir, "..", "hook-ascender", "SKILL.md"))
+    source_code = read_file(os.path.join(ref_dir, "before.tsx"))
+    actual_output = read_file(os.path.join(ref_dir, "after-component.tsx"))
     
     # 2. Setup the Test Case
     test_case = LLMTestCase(
