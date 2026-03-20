@@ -1,0 +1,12 @@
+{
+  "name": "@sia/promptfoo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "eval": "promptfoo eval",
+    "view": "promptfoo view"
+  },
+  "dependencies": {
+    "promptfoo": "latest"
+  }
+}

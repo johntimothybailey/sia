@@ -9,6 +9,8 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
+    "test:promptfoo": "bun run --filter @sia/promptfoo eval",
+    "test:deepeval": "bun run --filter @sia/deepeval test",
     "changeset": "changeset",
     "changeset:release": "changeset version && changeset publish"
   },
