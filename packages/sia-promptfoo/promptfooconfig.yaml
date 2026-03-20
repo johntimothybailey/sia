@@ -34,11 +34,12 @@ tests:
       # Deterministic Assertions (Local & Free)
       - type: javascript
         value: |
-          // Ensure the refactored component has exactly 2 hook calls (useState and the domain hook)
-          // We look for 'use' followed by CapitalizedWord and parenthesis
-          const matches = output.match(/use[A-Z]\w+\s*\(/g) || [];
-          const hookCount = matches.length;
-          return hookCount === 2;
+          // The output contains both after-component.tsx and after-hook.ts separated by a delimiter.
+          // We only want to verify the hook count in the refactored component (the first part).
+          const parts = output.split(/---\s*\(.*?\)\s*---/);
+          const componentOutput = parts[0];
+          const matches = componentOutput.match(/use[A-Z]\w+\s*\(/g) || [];
+          return matches.length === 2;
 
       # Model-Graded Assertion (requires LLM API key)
       # - type: model-graded-closedqa
