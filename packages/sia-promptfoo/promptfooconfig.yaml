@@ -1,0 +1,48 @@
+# Promptfoo Configuration for Sia Skills
+# Evaluates the Hook-Ascender protocol by comparing 'before' and 'after' references.
+
+# 1. Define Providers
+# For local evaluation, we can use a script provider to 'simulate' the skill application.
+# For production evaluation, you would change this to 'openai:gpt-4o' or similar.
+providers:
+  - id: exec:./provider.sh
+    label: Skill Evaluator
+
+# 2. Define the Global Prompt
+prompts:
+  - |
+    You are an Agentic UI Engineer specializing in the Sia Hook-Ascender protocol.
+    Apply the following skill to the provided code:
+
+    SKILL INSTRUCTIONS:
+    {{skillInstructions}}
+
+    SOURCE CODE:
+    {{sourceCode}}
+
+    OUTPUT: Produce only the refactored code (after-component.tsx) 
+    and the new domain hook (after-hook.ts) separated by a clear delimiter.
+
+# 2. Define the Test Cases
+# We use the 'basic' track references as our ground truth.
+tests:
+  - vars:
+      skillInstructions: file://../hook-ascender/SKILL.md
+      sourceCode: file://../hook-ascender/references/basic/before.tsx
+
+    assert:
+      # Deterministic Assertions (Local & Free)
+      - type: javascript
+        value: |
+          // The output contains both after-component.tsx and after-hook.ts separated by a delimiter.
+          // We only want to verify the hook count in the refactored component (the first part).
+          const parts = output.split(/---\s*\(.*?\)\s*---/);
+          const componentOutput = parts[0];
+          const matches = componentOutput.match(/use[A-Z]\w+\s*\(/g) || [];
+          return matches.length === 2;
+
+      # Model-Graded Assertion (requires LLM API key)
+      # - type: model-graded-closedqa
+      #   value: "Does the output correctly move query and mutation logic into a separate hook file?"
+
+    threshold: 0.8

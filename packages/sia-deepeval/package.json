@@ -1,0 +1,8 @@
+{
+  "name": "@sia/deepeval",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "mise exec -- python3 -m pytest test_hook_ascender.py"
+  }
+}

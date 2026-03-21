@@ -9,6 +9,9 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
+    "test:promptfoo": "turbo test --filter=@sia/promptfoo",
+    "test:promptfoo:ci": "turbo test --filter=@sia/promptfoo -- --no-cache",
+    "test:deepeval": "turbo test --filter=@sia/deepeval",
     "changeset": "changeset",
     "changeset:release": "changeset version && changeset publish"
   },

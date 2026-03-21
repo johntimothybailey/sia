@@ -9,6 +9,10 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "test": {
+      "cache": false,
+      "env": ["OPENAI_API_KEY", "GROQ_API_KEY", "GEMINI_API_KEY", "ANTHROPIC_API_KEY"]
     }
   }
 }
