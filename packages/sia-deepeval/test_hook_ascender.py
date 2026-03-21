@@ -9,17 +9,11 @@ from deepeval.models.llms.gemini_model import GeminiModel
 
 # 1. Resolve environment variables from the monorepo root
 # This ensures we pick up .env.local even when running from the package dir.
-def load_env_from_root():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    while current_dir != "/":
-        env_path = os.path.join(current_dir, ".env.local")
-        if os.path.exists(env_path):
-            load_dotenv(env_path)
-            return True
-        current_dir = os.path.dirname(current_dir)
-    return False
+PKG_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_ENV = os.path.join(PKG_DIR, "..", "..", ".env.local")
 
-load_env_from_root()
+if os.path.exists(ROOT_ENV):
+    load_dotenv(ROOT_ENV)
 load_dotenv() # Fallback for package-local .env
 
 def get_eval_model():
@@ -51,10 +45,9 @@ def test_hook_ascender_relevancy():
 
     # Load requirements and references
     # Note: Use absolute paths resolved from the location of this test file
-    pkg_dir = os.path.dirname(os.path.abspath(__file__))
-    ref_dir = os.path.join(pkg_dir, "..", "hook-ascender", "references", "basic")
+    ref_dir = os.path.join(PKG_DIR, "..", "hook-ascender", "references", "basic")
     
-    skill_instructions = read_file(os.path.join(pkg_dir, "..", "hook-ascender", "SKILL.md"))
+    skill_instructions = read_file(os.path.join(PKG_DIR, "..", "hook-ascender", "SKILL.md"))
     source_code = read_file(os.path.join(ref_dir, "before.tsx"))
     actual_output = read_file(os.path.join(ref_dir, "after-component.tsx"))
     
