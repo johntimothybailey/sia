@@ -19,24 +19,36 @@ Named after the Egyptian deity of perception and wisdom, **Sia** embodies the in
 
 ## 🏗 Architecture
 
-Sia leverages **Turborepo** for ultra-fast builds and task orchestration, combined with **Changesets** for independent versioning and publishing of individual skills.
+Sia focuses on **Agentic-Ready** skill distribution. It uses a specialized directory structure and tooling to ensure skills are portable and reliable.
 
-*   **Monorepo Strategy**: Single source of truth for all skills, providing rich cross-component context for AI agents.
-*   **Agentic-Ready**: Every skill is designed with an "agent-first" mindset—structured for easy discovery and reliable execution.
-*   **Quality Guardrails**: Built-in mechanisms to prevent hook bloat, enforce complexity thresholds, and maintain architectural integrity.
+*   **Skills Directory (`skills/`)**: Dedicated folder for granular, self-contained agentic skills. Each skill includes a `SKILL.md` (prompts/instructions) and a `references/` directory (ground truth examples).
+*   **Monorepo Strategy**: Uses **Turborepo** and **Bun** workspaces to manage both the skills and the local evaluators (`sia-deepeval`, `sia-promptfoo`) that validate them.
+*   **Skill-Harbor Ready**: Fully compatible with [Skill-Harbor](https://github.com/johntimothybailey/skill-harbor) for seamless synchronization ("mooring") into `.harbor` environments.
 
 ---
 
 ## ⚡️ Skills
 
-Skills in Sia are independently managed and can be installed via [Agent Skill Porter](https://www.npmjs.com/package/agent-skill-porter) or [Uberskills](https://uberskills.dev/).
+Sia skills are independently managed and can be "moored" into your project using `skill-harbor` or `skillfish`.
 
 | Name | Purpose | Status |
 | :--- | :--- | :--- |
-| `Hook-Ascender` | Enforces presentation-first React components by moving logic to custom hooks. | `Official` |
+| `Hook-Ascender` | Enforces presentation-first React components. | `Official` |
+| `Catch-22` | Strict pre-CI automated reviewer for correctness. | `Official` |
 
-### Example: Hook-Ascender
-`Hook-Ascender` is a specialized skill that monitors React component complexity. It prevents components from becoming bloated by ensuring non-trivial hook logic (queries, mutations, derived state) is ascended into domain-named custom hooks, keeping the UI focused on presentation.
+### Skill Integration
+
+To use these skills in your project, add them to your `harbor-manifest.json`:
+
+```json
+{
+  "skills": {
+    "catch-22": "johntimothybailey/sia/skills/catch-22"
+  }
+}
+```
+
+Then run `skill-harbor up` to moor them into your local environment.
 
 ---
 

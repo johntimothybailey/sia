@@ -45,9 +45,9 @@ def test_hook_ascender_relevancy():
 
     # Load requirements and references
     # Note: Use absolute paths resolved from the location of this test file
-    ref_dir = os.path.join(PKG_DIR, "..", "hook-ascender", "references", "basic")
+    ref_dir = os.path.join(PKG_DIR, "..", "..", "skills", "hook-ascender", "references", "basic")
     
-    skill_instructions = read_file(os.path.join(PKG_DIR, "..", "hook-ascender", "SKILL.md"))
+    skill_instructions = read_file(os.path.join(PKG_DIR, "..", "..", "skills", "hook-ascender", "SKILL.md"))
     source_code = read_file(os.path.join(ref_dir, "before.tsx"))
     actual_output = read_file(os.path.join(ref_dir, "after-component.tsx"))
     
