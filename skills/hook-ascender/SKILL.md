@@ -1,5 +1,8 @@
 ---
 name: hook-ascender
+version: 1.0.0
+author: johnbailey
+tags: [react, refactor, hooks, typescript]
 description: Enforces presentation-first React components by moving non-trivial hook logic into domain-named custom hooks. Use when implementing tickets or feature requests that touch React or TSX components, especially when creating or editing UI components with multiple hooks, derived state, effects, or async data hooks such as useQuery, useMutation, Convex queries, or similar.
 ---
 

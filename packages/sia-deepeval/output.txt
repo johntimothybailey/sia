@@ -1,0 +1,9 @@
+Using Model: <openai.OpenAI object at 0x107940d10>
+Reading skill instructions and source code...
+Evaluating using LLM... This may take a few seconds.
+
+==================================================
+CATCH-22 REVIEW OUTPUT
+==================================================
+('## Findings\n\n### 1. Count-Include Mismatch in Marina Details Query\nLikely reviewer: `Cursor Bot`\nSeverity: `high`\nWhy it matters: This mismatch can cause the UI to display incorrect information, such as incomplete uploads, while the count suggests a different number of completed uploads.\nEvidence: The `include` block in the `getMarinaDetails` function is missing the `uploadCompleted` filter, which is present in the `_count` block. This discrepancy can lead to inconsistent data being returned.\nRecommended change: Add the `uploadCompleted` filter to the `include` block for `attachments`, like this:\n```diff\ninclude: {\n  _count: {\n    select: {\n      attachments: {\n        where: { uploadCompleted: true }\n      }\n    }\n  },\n  attachments: {\n    where: { uploadCompleted: true } // Add this filter\n  }\n}\n```\nConfidence: `high`\n\n## Open Questions\n- None\n\n## Residual Risk\n- The review is based on the provided code snippet and may not cover all possible scenarios or edge cases. Additional testing and review may be necessary to ensure the correctness and robustness of the code.', None)
+==================================================

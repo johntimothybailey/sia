@@ -3,7 +3,8 @@
   "private": true,
   "packageManager": "bun@1.2.19",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "skills/*"
   ],
   "scripts": {
     "build": "turbo build",

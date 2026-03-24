@@ -27,8 +27,8 @@ prompts:
 # We use the 'basic' track references as our ground truth.
 tests:
   - vars:
-      skillInstructions: file://../hook-ascender/SKILL.md
-      sourceCode: file://../hook-ascender/references/basic/before.tsx
+      skillInstructions: file://../../skills/hook-ascender/SKILL.md
+      sourceCode: file://../../skills/hook-ascender/references/basic/before.tsx
 
     assert:
       # Deterministic Assertions (Local & Free)
