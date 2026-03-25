@@ -7,7 +7,7 @@
   </p>
 </div>
 
-Sia is an **Agentic Skill Forge** that provides the context and guardrails for AI agents to build and maintain web applications. 
+Sia is an **Agentic Skill Forge** that provides the context and guardrails for AI agents to build and maintain web applications. See our [Ecosystem Analysis & Future Proposals](docs/skill-analysis.md) to understand why we focus on active enforcement over passive knowledge.
 
 ---
 
