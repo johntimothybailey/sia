@@ -151,6 +151,7 @@ Present findings first, ordered by severity and likelihood of automated detectio
 
 For every finding include:
 - `title`
+- `file`: the file path(s) where the issue was found
 - `likely_reviewer`: `Cursor Bot`, `Greptile`, `CodeRabbit`, `Qodo`, `Either`, or `Unclear`
 - `severity`: `high`, `medium`, or `low`
 - `why_it_matters`
@@ -196,7 +197,8 @@ Use this shape:
 ## Findings
 
 ### 1. <title>
-Likely reviewer: <Cursor Bot|Greptile|Either|Unclear>
+File: `<path/to/file>`
+Likely reviewer: <Cursor Bot|Greptile|CodeRabbit|Qodo|Either|Unclear>
 Severity: <high|medium|low>
 Why it matters: <impact>
 Evidence: <diff-aware explanation>
