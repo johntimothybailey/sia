@@ -1,12 +1,12 @@
 ---
 name: catch-22
-version: 1.1.0
+version: 1.2.0
 author: johnbailey
-tags: [review, correctness, prisma, security]
-description: Reviews uncommitted changes and branch-vs-base diffs like a strict automated reviewer, focusing on the kinds of issues Cursor Bot or Greptile are likely to flag before CI/CD. Use when the user asks for early review, pre-CI feedback, uncommitted-change review, Greptile-style review, Cursor Bot-style review, or wants to catch issues before the pipeline does.
+tags: [review, correctness, prisma, security, nextjs, react, typescript]
+description: Reviews uncommitted changes and branch-vs-base diffs like a strict automated reviewer, focusing on the kinds of issues Cursor Bot, Greptile, CodeRabbit, or Qodo are likely to flag before CI/CD. Use when the user asks for early review, pre-CI feedback, uncommitted-change review, or wants to catch issues before the pipeline does.
 ---
 
-<!-- Modified: 2026-03-24 | Author: johnbailey | Rationale: Added count-include-mismatch and count-vs-collection-drift to catch discrepancies between count filters and included record filters (e.g., uploadCompleted: true in _count but missing in include), preventing UI/data-consistency bugs. Previous additions: parsing-precedence-shadowing, cache-key-desync, mutation-query-mapping, orphaned-duplicate-state, query-enabled leakage, post-success simulation, and unidirectional cleanup checks. -->
+<!-- Modified: 2026-03-25 | Author: johnbailey | Rationale: Added stale-closure-capture, revalidation-vs-redirect-race, tenant-data-leakage, implicit-any-propagation, and optimistic-update-rollback-desync heuristics. Expanded tool references to include CodeRabbit and Qodo. Previous additions: count-include-mismatch, count-vs-collection-drift, parsing-precedence-shadowing, cache-key-desync, mutation-query-mapping, orphaned-duplicate-state, query-enabled leakage, post-success simulation, and unidirectional cleanup checks. -->
 
 # Catch 22
 
@@ -14,7 +14,7 @@ description: Reviews uncommitted changes and branch-vs-base diffs like a strict 
 Use this skill to pressure-test current changes before CI/CD or automated review catches them.
 
 Default goal:
-- find issues that Cursor Bot or Greptile would plausibly comment on
+- find issues that Cursor Bot, Greptile, CodeRabbit, or Qodo would plausibly comment on
 - prioritize correctness, regressions, contract drift, tests, and maintainability issues that increase merge risk
 - recommend a concrete change for every issue
 - ask for clarification only when missing context blocks a reliable review
@@ -95,6 +95,11 @@ Bias toward issues automated reviewers commonly flag:
 - portability or semantic traps where SQL, ORM, driver, or framework behavior is correct only in the current environment
 - mutation-query-mapping: for every changed mutation, identify the data entities it affects and ensure all corresponding fetching queries (especially those in sidebars, headers, or parent layouts) are invalidated or updated. Do not assume an existing invalidation call is correct if the underlying query procedure has been refactored.
 - count-include-mismatch: for every entity that includes both a count (e.g., `_count`) and a list of related records, verify that filters (such as `where: { uploadCompleted: true }`, `deletedAt: null`, or `status: 'published'`) are consistent across both. Discrepancies cause UI flickering, incorrect progress indicators, and exposure of incomplete or private data.
+- stale-closure-capture: when event handlers, callbacks, or intervals are defined inside `useEffect` or `useCallback`, verify the dependency array includes every referenced state or prop. If `eslint-disable-next-line` suppresses the warning, treat the suppression as a finding. A callback that captures stale state will silently overwrite user input or ignore recent updates.
+- revalidation-vs-redirect-race: in Next.js Server Actions, check whether `revalidatePath()` or `revalidateTag()` is called before `redirect()`. In production with ISR or caching enabled, the redirect can fire before the cache is purged, landing the user on a page showing stale data. Reorder so revalidation completes before redirect, or use `revalidatePath` after the redirect target renders.
+- tenant-data-leakage: in multi-tenant applications, verify that every database query inside a Server Action, API route, or server-side function scopes results to the current authenticated user's `organizationId`, `tenantId`, or equivalent. A query that returns data without tenant scoping works correctly in single-tenant dev but silently exposes other tenants' data in production.
+- implicit-any-propagation: when a function returns `any`, an untyped external library result, or uses a broad generic like `Record<string, any>`, trace the return value through its consumers. If `any` silently propagates through the call chain, TypeScript's type safety is defeated for every downstream consumer without producing a compiler error.
+- optimistic-update-rollback-desync: for optimistic UI updates (e.g., TanStack Query `onMutate` cache writes, Convex optimistic updates), verify that the `onError` rollback restores the exact snapshot captured before the mutation, not a stale or default value. Also check whether a concurrent mutation that landed between `onMutate` and `onError` would be silently overwritten by the rollback.
 
 Do not inflate weak style nits into findings unless they are likely to trigger an automated comment or meaningfully increase delivery risk.
 
@@ -119,6 +124,11 @@ Actively defend against these review failures:
 - `orphaned-duplicate-state`: when syncing a "one-shot" value from a global source (localStorage, URL, or Context) into a local `useState` or `useMemo`, verify that the cleanup path nullifies **both**. If the global key is cleared but the local state remains, the component stays in a "ghost" mode where queries or effects may re-trigger on subsequent renders.
 - `parsing-precedence-shadowing`: in parsers, coercers, or serializers, check whether general rules (e.g., boolean or numeric coercion) are applied before more specific overrides (e.g., preserved keys, protected prefixes, or key-based type exceptions). Verify that the order of conditional branches preserves domain-specific data types.
 - `count-vs-collection-drift`: do not assume that a `count` and a `list` on the same object are driven by the same implicit filters. Explicitly check the `where` clauses in both the `_count` and the `include` or `select` blocks to ensure they aren't drifting apart as new requirements are added.
+- `works-in-dev-breaks-in-prod`: many Next.js and React patterns behave differently under development vs. production builds. Caching, ISR, middleware matching, and Server Action serialization boundaries are common divergence points. Do not treat local dev success as proof of correctness.
+- `silent-type-erosion`: when `any` enters a typed call chain—through an untyped library, a JSON parse, or a broad generic—it silently disables compile-time checks for everything downstream. Trace the type through its consumers and flag when safety is no longer enforced.
+- `stale-closure-trap`: closures in React effects and callbacks capture variable values at definition time. If the dependency array is incomplete or suppressed, the closure operates on stale data. The bug is invisible on first interaction and only manifests after state changes.
+- `optimistic-rollback-collision`: optimistic updates assume the cache state at snapshot time is still valid at rollback time. If another mutation lands in between, the rollback silently overwrites the second mutation's result. Trace concurrent mutation paths, not just the happy path.
+- `redirect-before-revalidation`: in Server Actions, the order of `revalidatePath()` and `redirect()` matters in production. A redirect that fires before cache purging completes sends the user to a stale page. This never happens in dev mode because there is no cache.
 
 When reviewing database code, string interpolation, or query builders:
 - check whether wildcards, concatenation, coercion, escaping, and parameter placement happen in the application layer or in the target engine
@@ -141,7 +151,7 @@ Present findings first, ordered by severity and likelihood of automated detectio
 
 For every finding include:
 - `title`
-- `likely_reviewer`: `Cursor Bot`, `Greptile`, `Either`, or `Unclear`
+- `likely_reviewer`: `Cursor Bot`, `Greptile`, `CodeRabbit`, `Qodo`, `Either`, or `Unclear`
 - `severity`: `high`, `medium`, or `low`
 - `why_it_matters`
 - `evidence`
@@ -174,6 +184,8 @@ Use these as a bias, not a hard rule:
 
 - `Cursor Bot`: logic bugs, edge cases, security issues, missing tests for risky behavior, and code quality problems that can lead to real defects
 - `Greptile`: logic bugs, code that may not compile or run, dead or misleading code, complexity, unresolved symbols, cross-file inconsistencies, and subtle timing issues discovered by following state flow through related code
+- `CodeRabbit`: logic and correctness issues (75% higher in AI-generated code), readability problems, performance inefficiencies (excessive I/O, unnecessary re-renders), and security vulnerabilities including insecure deserialization and improper authentication
+- `Qodo`: race conditions, architectural drift, code duplication across repos, missing test coverage for edge cases, and validation of changes against acceptance criteria from project management tools
 - `Either`: correctness regressions, contract drift, CI breakage, and maintainability issues with clear delivery risk
 - `Unclear`: use only when the issue is real but tool attribution would be guesswork
 
