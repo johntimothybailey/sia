@@ -38,7 +38,7 @@ Then run `skill-harbor up` in your terminal to moor them into your local `.harbo
 `Hook-Ascender` is a specialized skill that enforces presentation-first React components. It monitors React component complexity to prevent UI code from becoming bloated with business logic.
 
 **How to use it:**
-Apply this skill whenever you or an AI agent create or edit a React component. 
+Apply this skill whenever you or an AI agent create or edit a React component.
 
 **What it does:**
 When a component accumulates more than two standard hooks (like `useState` or `useEffect`) or introduces complex async queries (like TanStack Query or Convex hooks), Hook-Ascender will trigger a refactor protocol to:
@@ -49,7 +49,7 @@ When a component accumulates more than two standard hooks (like `useState` or `u
 **Example Intent:**
 > *"Read this Linear ticket and implement the React change while applying Hook-Ascender."*
 
-### 🔎 Catch-22 
+### 🔎 Catch-22
 **Status**: `Official` | **Tags**: `review`, `correctness`, `prisma`, `security`
 
 `Catch-22` acts as a strict, automated pre-CI reviewer. It pressure-tests current branch changes before CI/CD pipelines run, focusing on the kinds of subtle correctness bugs that AI auto-reviewers like Cursor Bot or Greptile are likely to flag.
@@ -77,9 +77,9 @@ Named after the Egyptian deity of perception and wisdom, **Sia** embodies the in
 
 Under the hood, Sia leverages a robust monorepo structure to ensure these skills are portable, testable, and reliable.
 
-*   **Skills Directory (`skills/`)**: Dedicated folder for granular, self-contained agentic skills. Each skill includes a `SKILL.md` (prompts/instructions) and a `references/` directory (ground truth examples for testing).
-*   **Monorepo Strategy**: Uses **Turborepo** and **Bun** workspaces to manage both the skills and the independent local evaluators that validate them.
-*   **Local Evaluators**: We use Promptfoo (`sia-promptfoo`) and DeepEval (`sia-deepeval`) to rigorously test our skills with real LLMs before they are published to the wider ecosystem.
+- **Skills Directory (`skills/`)**: Dedicated folder for granular, self-contained agentic skills. Each skill includes a `SKILL.md` (prompts/instructions) and a `references/` directory (ground truth examples for testing).
+- **Monorepo Strategy**: Uses **Turborepo** and **Bun** workspaces to manage both the skills and the independent local evaluators that validate them.
+- **Local Evaluators**: We use Promptfoo (`sia-promptfoo`) and DeepEval (`sia-deepeval`) to rigorously test our skills with real LLMs before they are published to the wider ecosystem.
 
 ---
 
@@ -103,4 +103,5 @@ If you want to contribute to Sia or run the skill evaluators locally:
 
 ---
 
-*“Guardians of the digital grain, ensuring every line serves the harvest.”*
+> [!NOTE]
+> *“Guardians of the digital grain, ensuring every line serves the harvest.”*
