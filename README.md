@@ -9,6 +9,18 @@
 
 Sia is an **Agentic Skill Forge** that provides the context and guardrails for AI agents to build and maintain web applications. See our [Ecosystem Analysis & Future Proposals](docs/skill-analysis.md) to understand why we focus on active enforcement over passive knowledge.
 
+For review-oriented skills, see [Teachback + Approver Packet Workflows](docs/teachback-approver-workflows.md) for when to use each skill separately and how to use them together. For a broader documentation entry point, see the [Docs Index](docs/README.md).
+
+---
+
+## 🔍 Review Skills
+
+If you are here specifically for review and signoff workflows:
+
+- [Teachback](skills/teachback/SKILL.md) — everyday diff review, walkthroughs, and engineer knowledge transfer
+- [Approver-Packet](skills/approver-packet/SKILL.md) — strict recommendation-first approval packet with evidence, risk, and rollback
+- [Teachback + Approver Packet Workflows](docs/teachback-approver-workflows.md) — how to use them separately and together
+
 ---
 
 ## ⚡️ The Skills
@@ -23,7 +35,9 @@ To use any of the skills below in your project, simply add them to your `harbor-
 {
   "skills": {
     "catch-22": "johntimothybailey/sia/skills/catch-22",
-    "hook-ascender": "johntimothybailey/sia/skills/hook-ascender"
+    "hook-ascender": "johntimothybailey/sia/skills/hook-ascender",
+    "teachback": "johntimothybailey/sia/skills/teachback",
+    "approver-packet": "johntimothybailey/sia/skills/approver-packet"
   }
 }
 ```
@@ -66,6 +80,48 @@ Instead of generic style nits, Catch-22 looks for specific, high-risk anti-patte
 
 **Example Intent:**
 > *"Review my uncommitted changes like a strict automated reviewer. Focus on issues Cursor Bot or Greptile are likely to catch. Be critical and recommend a concrete change for every issue."*
+
+### 📘 Teachback
+**Status**: `Official` | **Tags**: `review`, `diff`, `teachback`, `knowledge-transfer`
+
+`Teachback` is the everyday review-and-explanation skill. It is designed for PR walkthroughs, diff reviews, bug-fix explanations, and pairing-style knowledge transfer.
+
+**How to use it:**
+Use this skill when you want an engineer-friendly explanation of a concrete change set.
+
+**What it does:**
+- explains what changed and why
+- contrasts old vs new behavior
+- highlights what would break if the change were removed
+- uses tests and nearby context as evidence when available
+
+**Example Intent:**
+> *"Use teachback on my staged diff and give me both a diff review and a teachback walkthrough."*
+
+### ✅ Approver-Packet
+**Status**: `Official` | **Tags**: `review`, `approval`, `risk`, `evidence`, `structured-output`
+
+`Approver-Packet` is the stricter companion to Teachback. It is built for recommendation-first approval reviews, lead signoff, rollback analysis, and structured reviewer handoff.
+
+**How to use it:**
+Use this skill when you need a decision-ready packet rather than a broad explanatory walkthrough.
+
+**What it does:**
+- gives an approval recommendation
+- summarizes evidence and missing proof
+- calls out residual risk and rollback impact
+- can emit structured schema output for tooling
+
+**Example Intent:**
+> *"Use approver-packet on my staged diff and tell me if it is ready for approval, with risk and rollback notes."*
+
+### 🔁 Using Teachback + Approver-Packet Together
+
+The recommended combined workflow is:
+1. run **Teachback** to understand the change deeply
+2. run **Approver-Packet** to compress that understanding into a decision-first approval artifact
+
+See [Teachback + Approver Packet Workflows](docs/teachback-approver-workflows.md) for the full workflow guide.
 
 ---
 
