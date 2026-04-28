@@ -65,28 +65,12 @@ It discovers gates by inspecting:
 
 If a gate cannot be discovered, the result should be `not available`. If a gate is discoverable but not executed, the result should be `not run`.
 
-## Fixture Harness Usage
+## Contributor Note
 
-The skill is paired with a contributor-only regression harness and canonical fixture corpus under `eval/skills/catch-22/fixtures/`.
+Catch-22 is maintained with a separate contributor-only eval harness.
 
-Runtime consumers only need the files under `skills/catch-22/`. The repo-root `eval/skills/catch-22/` tree exists for maintainers who are changing the skill and want to re-run the offline proof surface.
-
-Required files per fixture directory:
-- `diff.patch`
-- `expected-findings.md`
-- `false-positive-traps.md`
-
-The harness contract is:
-- enumerate fixtures
-- validate required fixture files
-- validate expected findings and false-positive traps
-- validate coverage-matrix presence/shape
-- validate deterministic gate discovery behavior
-
-Command surface:
-- `bun run --cwd eval/skills/catch-22 test:docs`
-- `bun run --cwd eval/skills/catch-22 discover:gates`
-- `bun run --cwd eval/skills/catch-22 test:harness`
+- runtime consumers only need the files under `skills/catch-22/`
+- contributors changing the skill itself should use the canonical workflow in `CONTRIBUTING.md`
 
 ## Non-Goals
 

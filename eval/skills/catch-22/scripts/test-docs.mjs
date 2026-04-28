@@ -12,8 +12,10 @@ import {
 
 const skillPath = path.join(SKILL_ROOT, 'SKILL.md');
 const readmePath = path.join(SKILL_ROOT, 'README.md');
+const contributingPath = path.join(REPO_ROOT, 'CONTRIBUTING.md');
 const skill = readText(skillPath);
 const readme = readText(readmePath);
+const contributing = readText(contributingPath);
 
 REQUIRED_SKILL_HEADINGS.forEach((heading) => {
   ensure(skill.includes(heading), `SKILL.md missing heading: ${heading}`);
@@ -61,16 +63,19 @@ ensure(!readmeMentionsQodo || readmeNarrowsQodo, 'README.md mentions Qodo withou
 const readmeMentionsPipeline = /(required review procedure|required procedure|explicit pipeline|review pipeline|ordered review procedure)/i.test(readme);
 ensure(readmeMentionsPipeline, 'README.md does not describe the explicit pipeline behavior');
 
-const readmeMentionsHarnessUsage =
-  /bun run --cwd eval\/skills\/catch-22 test:docs/i.test(readme) &&
-  /bun run --cwd eval\/skills\/catch-22 discover:gates/i.test(readme) &&
-  /bun run --cwd eval\/skills\/catch-22 test:harness/i.test(readme);
-ensure(readmeMentionsHarnessUsage, 'README.md does not document harness usage commands');
-
 const readmeMentionsLocalScope = /(local-only|local emulation|non-live|does not call live services|offline)/i.test(readme);
 ensure(readmeMentionsLocalScope, 'README.md does not describe the local/non-live parity scope');
 
 const readmeMentionsNonGoals = /##\s+non-goals/i.test(readme) || /non-goals:/i.test(readme);
 ensure(readmeMentionsNonGoals, 'README.md does not document non-goals');
 
-process.stdout.write(`Docs contract OK for ${path.relative(REPO_ROOT, skillPath)} and ${path.relative(REPO_ROOT, readmePath)}\n`);
+const contributingMentionsCatch22Eval =
+  /Catch-22 contributor workflow/i.test(contributing) &&
+  /bun run --cwd eval\/skills\/catch-22 test:docs/i.test(contributing) &&
+  /bun run --cwd eval\/skills\/catch-22 discover:gates/i.test(contributing) &&
+  /bun run --cwd eval\/skills\/catch-22 test:harness/i.test(contributing);
+ensure(contributingMentionsCatch22Eval, 'CONTRIBUTING.md does not document the Catch-22 eval workflow');
+
+process.stdout.write(
+  `Docs contract OK for ${path.relative(REPO_ROOT, skillPath)}, ${path.relative(REPO_ROOT, readmePath)}, and ${path.relative(REPO_ROOT, contributingPath)}\n`,
+);

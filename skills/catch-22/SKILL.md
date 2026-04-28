@@ -211,26 +211,9 @@ Drop or downgrade a finding when:
 ## Fixture-Based Regression Harness
 Use the fixture harness to keep the review protocol repeatable.
 
-Contributor note: the maintainer-only eval assets live under `eval/skills/catch-22/`. Runtime consumers of the skill only need the files under `skills/catch-22/`.
+This skill is regression-tested by a separate maintainer-only eval harness.
 
-Required fixture shape per scenario directory under `eval/skills/catch-22/fixtures/`:
-- `diff.patch`
-- `expected-findings.md`
-- `false-positive-traps.md`
-
-Harness expectations:
-- enumerate all fixture directories
-- fail if any required file is missing
-- validate that expected findings contain the Finding Validation Rubric fields
-- validate that false-positive traps document what must **not** be reported
-- validate Coverage Matrix presence and required keys
-- validate deterministic gate discovery expectations against fixture metadata and local repo metadata
-- remain local and deterministic; do **not** call live CodeRabbit, Greptile, or Cursor services
-
-Harness command surface for this skill:
-- `bun run --cwd eval/skills/catch-22 test:docs`
-- `bun run --cwd eval/skills/catch-22 discover:gates`
-- `bun run --cwd eval/skills/catch-22 test:harness`
+Runtime consumers do not need those assets to use Catch-22. Contributor workflow and eval commands live in `CONTRIBUTING.md`.
 
 ## Clarification Handshake
 Ask at most one question at a time, and only if the answer would materially change the review quality.
