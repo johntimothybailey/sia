@@ -62,9 +62,9 @@ const readmeMentionsPipeline = /(required review procedure|required procedure|ex
 ensure(readmeMentionsPipeline, 'README.md does not describe the explicit pipeline behavior');
 
 const readmeMentionsHarnessUsage =
-  /bun run --cwd skills\/catch-22 test:docs/i.test(readme) &&
-  /bun run --cwd skills\/catch-22 discover:gates/i.test(readme) &&
-  /bun run --cwd skills\/catch-22 test:harness/i.test(readme);
+  /bun run --cwd eval\/skills\/catch-22 test:docs/i.test(readme) &&
+  /bun run --cwd eval\/skills\/catch-22 discover:gates/i.test(readme) &&
+  /bun run --cwd eval\/skills\/catch-22 test:harness/i.test(readme);
 ensure(readmeMentionsHarnessUsage, 'README.md does not document harness usage commands');
 
 const readmeMentionsLocalScope = /(local-only|local emulation|non-live|does not call live services|offline)/i.test(readme);

@@ -2,9 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 
-export const SKILL_ROOT = path.resolve(import.meta.dirname, '..');
-export const REPO_ROOT = path.resolve(SKILL_ROOT, '..', '..');
-export const FIXTURES_ROOT = path.join(SKILL_ROOT, 'fixtures');
+export const EVAL_ROOT = path.resolve(import.meta.dirname, '..');
+export const REPO_ROOT = path.resolve(EVAL_ROOT, '..', '..', '..');
+export const SKILL_ROOT = path.join(REPO_ROOT, 'skills', 'catch-22');
+export const FIXTURES_ROOT = path.join(EVAL_ROOT, 'fixtures');
 
 export const REQUIRED_SCENARIOS = [
   'stale-import-after-refactor',

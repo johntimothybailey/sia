@@ -211,7 +211,9 @@ Drop or downgrade a finding when:
 ## Fixture-Based Regression Harness
 Use the fixture harness to keep the review protocol repeatable.
 
-Required fixture shape per scenario directory under `skills/catch-22/fixtures/`:
+Contributor note: the maintainer-only eval assets live under `eval/skills/catch-22/`. Runtime consumers of the skill only need the files under `skills/catch-22/`.
+
+Required fixture shape per scenario directory under `eval/skills/catch-22/fixtures/`:
 - `diff.patch`
 - `expected-findings.md`
 - `false-positive-traps.md`
@@ -226,9 +228,9 @@ Harness expectations:
 - remain local and deterministic; do **not** call live CodeRabbit, Greptile, or Cursor services
 
 Harness command surface for this skill:
-- `bun run --cwd skills/catch-22 test:docs`
-- `bun run --cwd skills/catch-22 discover:gates`
-- `bun run --cwd skills/catch-22 test:harness`
+- `bun run --cwd eval/skills/catch-22 test:docs`
+- `bun run --cwd eval/skills/catch-22 discover:gates`
+- `bun run --cwd eval/skills/catch-22 test:harness`
 
 ## Clarification Handshake
 Ask at most one question at a time, and only if the answer would materially change the review quality.

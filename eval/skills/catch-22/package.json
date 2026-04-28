@@ -2,7 +2,7 @@
   "name": "@sia/catch-22",
   "version": "0.1.0",
   "private": true,
-  "description": "Deterministic local harness and fixtures for the catch-22 review pipeline.",
+  "description": "Contributor-only deterministic eval harness and fixtures for the catch-22 review pipeline.",
   "type": "module",
   "scripts": {
     "discover:gates": "bun scripts/discover-gates.mjs",
