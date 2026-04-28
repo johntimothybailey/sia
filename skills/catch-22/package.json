@@ -1,0 +1,20 @@
+{
+  "name": "@sia/catch-22",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deterministic local harness and fixtures for the catch-22 review pipeline.",
+  "type": "module",
+  "scripts": {
+    "discover:gates": "bun scripts/discover-gates.mjs",
+    "test:docs": "bun scripts/test-docs.mjs",
+    "test:harness": "bun scripts/test-harness.mjs"
+  },
+  "keywords": [
+    "agentic-skill",
+    "review",
+    "fixtures",
+    "harness"
+  ],
+  "author": "Sia",
+  "license": "MIT"
+}

@@ -1,12 +1,12 @@
 ---
 name: catch-22
-version: 1.2.0
+version: 1.3.0
 author: johnbailey
 tags: [review, correctness, prisma, security, nextjs, react, typescript]
-description: Reviews uncommitted changes and branch-vs-base diffs like a strict automated reviewer, focusing on the kinds of issues Cursor Bot, Greptile, CodeRabbit, or Qodo are likely to flag before CI/CD. Use when the user asks for early review, pre-CI feedback, uncommitted-change review, or wants to catch issues before the pipeline does.
+description: Reviews uncommitted changes and branch-vs-base diffs like a strict automated reviewer, focusing on the kinds of issues Cursor Bugbot, Greptile, and CodeRabbit are likely to flag before CI/CD. Use when the user asks for early review, pre-CI feedback, uncommitted-change review, or wants to catch issues before the pipeline does.
 ---
 
-<!-- Modified: 2026-03-25 | Author: johnbailey | Rationale: Added stale-closure-capture, revalidation-vs-redirect-race, tenant-data-leakage, implicit-any-propagation, and optimistic-update-rollback-desync heuristics. Expanded tool references to include CodeRabbit and Qodo. Previous additions: count-include-mismatch, count-vs-collection-drift, parsing-precedence-shadowing, cache-key-desync, mutation-query-mapping, orphaned-duplicate-state, query-enabled leakage, post-success simulation, and unidirectional cleanup checks. -->
+<!-- Modified: 2026-04-27 | Author: johnbailey | Rationale: Rewrote catch-22 as an explicit review pipeline with deterministic config/gate discovery, coverage reporting, validation rubric, and fixture-harness guidance. Qodo remains a heuristic lens only, not a parity target in pass one. -->
 
 # Catch 22
 
@@ -14,15 +14,31 @@ description: Reviews uncommitted changes and branch-vs-base diffs like a strict 
 Use this skill to pressure-test current changes before CI/CD or automated review catches them.
 
 Default goal:
-- find issues that Cursor Bot, Greptile, CodeRabbit, or Qodo would plausibly comment on
+- emulate the local inputs and review shape that `Cursor Bugbot`, `Greptile`, and `CodeRabbit` rely on
 - prioritize correctness, regressions, contract drift, tests, and maintainability issues that increase merge risk
 - recommend a concrete change for every issue
 - ask for clarification only when missing context blocks a reliable review
 
+`Qodo` may still be used as a heuristic lens for race conditions, drift, and missing edge-case coverage, but pass one does **not** claim Qodo parity.
+
 ## Canonical Review Prompt
 Use this intent when running the skill:
 
-> Review my current changes like a strict automated reviewer. Check both the branch-vs-base diff and the uncommitted/staged changes when available. Focus on issues Cursor Bot or Greptile are likely to catch, especially correctness bugs, regressions, missing tests, null or type-safety mistakes, API or schema drift, CI/CD breakage, and maintainability problems that obscure intent or create future risk. Be critical. For every issue, recommend a concrete change. Ask clarifying questions only when scope, baseline, or intended behavior is unclear.
+> Review my current changes like a strict automated reviewer. Check both the branch-vs-base diff and the uncommitted/staged changes when available. Follow the required catch-22 review procedure, load the applicable Cursor / Greptile / CodeRabbit review context, inspect deterministic gates when available, and validate every finding before reporting it. Focus on correctness bugs, regressions, missing tests, null or type-safety mistakes, API or schema drift, CI/CD breakage, and maintainability problems that obscure intent or create future risk. Be critical. For every issue, recommend a concrete change. Ask clarifying questions only when scope, baseline, or intended behavior is unclear.
+
+## Required Review Procedure
+Execute these steps in order. Do not skip a step silently.
+
+1. **Detect the base branch and capture the branch-vs-base diff.** Prefer the repo's inferred default branch; if multiple plausible bases exist, ask one targeted question.
+2. **Capture staged and unstaged working-tree diffs.** Review both when available; if only one exists, state the limitation.
+3. **Classify changed files.** Tag file types and roles such as app code, tests, schemas, migrations, CI/workflows, configs, docs, generated artifacts, and fixtures.
+4. **Load reviewer configuration.** Apply the Tool Config Discovery rules below for `Cursor Bugbot`, `Greptile`, and `CodeRabbit` before forming findings.
+5. **Expand the context graph.** Trace the changed surface through imports, callers, nearby tests, schemas, routes, migrations, API/contracts, CI/workflows, and package scripts.
+6. **Run deterministic gates when available.** Discover gates with the deterministic procedure below, then prefer gate-backed failures over speculation.
+7. **Perform ordered review passes.** Review in this order: compile/type/runtime breakage, contract/schema drift, data/auth/security risks, async/state/cache risks, CI/config regressions, and test coverage gaps.
+8. **Validate findings adversarially before reporting.** Apply the Finding Validation Rubric, remove duplicate or weak findings, and emit the required Coverage Matrix.
+
+If a git baseline is unavailable, fall back to the working tree and explicitly say that branch-level CI risk may be under-sampled.
 
 ## Review Scope
 Prefer this order:
@@ -31,30 +47,188 @@ Prefer this order:
 2. Review staged and unstaged changes to catch issues before commit.
 3. If only one scope is available, proceed with that scope and state the limitation.
 
-If a git baseline is unavailable, fall back to the working tree and explicitly say that branch-level CI risk may be under-sampled.
+## Tool Config Discovery
+Load repo-specific review context that would materially change what automated reviewers flag.
 
-## Deterministic Gates First
+Shared rules:
+- Treat config discovery as deterministic input gathering, not guesswork.
+- Record every config file discovered and whether it was loaded, skipped, or unavailable in the Coverage Matrix.
+- Prefer the nearest config that actually governs a changed file, but preserve root-level rules that apply globally.
+- If a config surface exists but cannot be interpreted locally without a live vendor integration, extract the deterministic parts and mark the rest as unavailable rather than inventing behavior.
+
+### CodeRabbit Parity Checks
+Inspect the root `.coderabbit.yaml` when present.
+
+Required extraction targets:
+- `reviews.profile`
+- `reviews.path_filters`
+- `reviews.path_instructions`
+- `reviews.tools`
+- `knowledge_base.code_guidelines`
+
+Parity procedure:
+- map `reviews.path_filters` and `reviews.path_instructions` against the changed-file set to determine which instructions apply
+- use `reviews.profile` to tune strictness when the profile encodes review posture
+- inspect `knowledge_base.code_guidelines` when present and treat them as repository review rules
+- inspect configured `reviews.tools`, then load likely matching local config files for enabled static-analysis, security, or formatting tools when they exist
+- likely companion configs include surfaces such as ESLint, TypeScript, markdownlint, GitHub Actions/actionlint, secret scanning, Prisma/schema tooling, or other tool-specific configs explicitly referenced by the repo
+- if `.coderabbit.yaml` is absent, mark CodeRabbit config discovery as unavailable rather than substituting another file
+
+### Greptile Parity Checks
+Inspect Greptile config from the repo root downward.
+
+Required discovery targets:
+- `.greptile/config.json`
+- `.greptile/rules.md`
+- `.greptile/files.json`
+- nested `.greptile/` folders relevant to changed files
+- legacy `greptile.json`
+
+Parity procedure:
+- treat `.greptile/` as the preferred config surface
+- for each changed file, walk upward to find applicable nested `.greptile/` folders and merge the relevant deterministic context
+- if both `.greptile/` and same-directory `greptile.json` exist, `.greptile/` wins and `greptile.json` is fallback only
+- use `.greptile/files.json` to understand explicit include/exclude scope when present
+- use `.greptile/rules.md` as repo-specific review rules and `.greptile/config.json` as behavior/config metadata
+- if neither `.greptile/` nor `greptile.json` exists for a path, record Greptile config as unavailable for that scope
+
+### Cursor Bugbot Parity Checks
+Inspect Bugbot rules for every changed file.
+
+Required discovery targets:
+- root `.cursor/BUGBOT.md`
+- nested `.cursor/BUGBOT.md` files discovered by walking upward from each changed file
+- prior local review context when it is explicitly available
+
+Parity procedure:
+- always load the root `.cursor/BUGBOT.md` when present
+- for each changed file, walk upward toward the repo root and load each applicable nested `.cursor/BUGBOT.md`
+- preserve cascade order from root to nearest file-specific rule so narrower guidance overrides broader guidance
+- when prior review context is available locally (for example saved comments, review notes, or fixture artifacts), use it only to reduce duplicate findings and identify candidate learned rules
+- when prior review context is not available, do **not** invent it; mark prior-review-context availability in the Coverage Matrix as `not available`
+- this parity target is local/offline only; it does not require live Cursor service integration
+
+## Deterministic Gate Command Discovery
 Before leaning on judgment-heavy review, check for cheap, high-confidence failure signals when they are available.
 
-Prioritize:
+Gate categories:
+- `typecheck`
+- `lint`
+- `test`
+- `build`
+- `static/security`
+
+Discovery order:
+1. inspect root `package.json` scripts
+2. inspect package-local `package.json` scripts for changed workspaces/packages
+3. inspect workspace orchestrators or command wrappers already present in-repo (for example `turbo.json`, `mise.toml`, `Makefile`, or equivalent local command surfaces)
+4. inspect nearby config files tied to the changed surface, such as TypeScript configs, ESLint configs, Prisma/schema files, GitHub Actions workflows, markdownlint config, test runner config, or security/static-analysis config
+5. map discovered commands/configs to the gate categories above
+
+Required behavior:
+- discovery must be deterministic and explainable
+- prefer explicit scripts over inferred shell commands
+- if a gate is discoverable but not runnable in the current context, report `not run`
+- if no gate is discoverable for a category, report `not available`
+- never guess nonexistent commands
+- if command output, diagnostics, or CI logs are provided, treat them as primary evidence and surface them before more speculative findings
+
+Prioritize these failure signals when available:
 - typecheck or compiler errors
 - lint failures with real correctness or merge-blocking impact
 - build failures
 - failing tests tied to changed behavior
 - unresolved imports, renamed symbols, missing exports, or stale references after refactors
 
-If command output, diagnostics, or CI logs are provided, treat them as primary evidence and surface them before more speculative findings.
-If these gates are not available to run, inspect the diff specifically for refactor fallout such as orphaned references, renamed functions not updated at call sites, or deleted symbols still in use.
+If gates are unavailable, inspect the diff specifically for refactor fallout such as orphaned references, renamed functions not updated at call sites, or deleted symbols still in use.
 
-## Context Sources
-Before reviewing, load any repo-specific review context that would change what these tools flag.
+## Coverage Matrix
+Every review result must include a coverage matrix that shows what was actually inspected.
 
-Check for:
-- root or nested `.cursor/BUGBOT.md` files near changed files
-- `greptile.json` or similar Greptile review configuration if present
-- nearby tests, validators, schemas, contracts, and config files tied to the changed code
+Required fields:
+- `branch_diff_reviewed`: `yes` or `no`
+- `base_branch`: detected branch name or `unknown`
+- `working_tree_reviewed`: `yes` or `no`
+- `changed_file_types`: list of classified file types/roles
+- `config_files`: discovered/loaded/skipped/unavailable status for:
+  - `.coderabbit.yaml`
+  - `.greptile/config.json`
+  - `.greptile/rules.md`
+  - `.greptile/files.json`
+  - nested `.greptile/` folders
+  - `greptile.json`
+  - root `.cursor/BUGBOT.md`
+  - nested `.cursor/BUGBOT.md`
+  - any relevant companion configs tied to enabled `reviews.tools`
+- `deterministic_gates`: status per category using only `pass`, `fail`, `not run`, or `not available`
+- `context_inspected`: whether each category was inspected:
+  - imports
+  - callers
+  - tests
+  - schemas
+  - routes
+  - migrations
+  - API/contracts
+  - CI
+  - package scripts
+- `prior_review_context`: `available`, `not available`, or a short deterministic description of what local artifact was used
 
-If no tool-specific rule files exist, continue without them and say nothing unless the absence creates meaningful uncertainty.
+Recommended shape:
+
+```markdown
+## Coverage Matrix
+| Area | Status | Notes |
+| --- | --- | --- |
+| Branch diff reviewed | yes | `origin/main...HEAD` |
+| Base branch | origin/main | inferred from repo default |
+| Working tree reviewed | yes | staged + unstaged |
+| Changed file types | yes | app code, tests, docs |
+| `.coderabbit.yaml` | loaded | `reviews.tools`, `reviews.path_instructions` |
+| `.greptile/config.json` | not available | no `.greptile/` in scope |
+| Root `.cursor/BUGBOT.md` | loaded | repo-wide rules applied |
+| Typecheck gate | pass | `bun run typecheck` |
+| Test gate | not run | no deterministic changed-scope test command |
+| Imports context | yes | traced direct imports |
+| Migrations context | no | no schema/migration files changed |
+| Prior review context | not available | no local comments artifact supplied |
+```
+
+## Finding Validation Rubric
+Before reporting any finding, validate it against all of the following:
+
+- **Concrete failure path:** explain how the bug or regression manifests, not just the smell
+- **Exact file/line evidence:** cite the strongest file and line references available
+- **Impact:** describe user, data, CI, or security impact
+- **Gate/test catchability:** say whether an existing or discovered deterministic gate would catch it, would miss it, or was unavailable
+- **Minimal recommended fix:** propose the narrowest safe change that addresses the defect
+
+Drop or downgrade a finding when:
+- it is only a style nit with no delivery risk
+- it duplicates a stronger finding
+- the evidence does not survive light adversarial checking through callers, tests, schemas, configs, or neighboring code
+- the conclusion depends on unavailable context and cannot be bounded honestly
+
+## Fixture-Based Regression Harness
+Use the fixture harness to keep the review protocol repeatable.
+
+Required fixture shape per scenario directory under `skills/catch-22/fixtures/`:
+- `diff.patch`
+- `expected-findings.md`
+- `false-positive-traps.md`
+
+Harness expectations:
+- enumerate all fixture directories
+- fail if any required file is missing
+- validate that expected findings contain the Finding Validation Rubric fields
+- validate that false-positive traps document what must **not** be reported
+- validate Coverage Matrix presence and required keys
+- validate deterministic gate discovery expectations against fixture metadata and local repo metadata
+- remain local and deterministic; do **not** call live CodeRabbit, Greptile, or Cursor services
+
+Harness command surface for this skill:
+- `bun run --cwd skills/catch-22 test:docs`
+- `bun run --cwd skills/catch-22 discover:gates`
+- `bun run --cwd skills/catch-22 test:harness`
 
 ## Clarification Handshake
 Ask at most one question at a time, and only if the answer would materially change the review quality.
@@ -160,6 +334,7 @@ For every finding include:
 - `confidence`: `high`, `medium`, or `low`
 
 After findings, include:
+- `Coverage Matrix`
 - `Open questions` only if unresolved ambiguity remains
 - `Residual risk` for anything not fully reviewable from the available diff
 
@@ -185,7 +360,7 @@ Use these as a bias, not a hard rule:
 
 - `Cursor Bot`: logic bugs, edge cases, security issues, missing tests for risky behavior, and code quality problems that can lead to real defects
 - `Greptile`: logic bugs, code that may not compile or run, dead or misleading code, complexity, unresolved symbols, cross-file inconsistencies, and subtle timing issues discovered by following state flow through related code
-- `CodeRabbit`: logic and correctness issues (75% higher in AI-generated code), readability problems, performance inefficiencies (excessive I/O, unnecessary re-renders), and security vulnerabilities including insecure deserialization and improper authentication
+- `CodeRabbit`: logic and correctness issues, readability problems, performance inefficiencies (excessive I/O, unnecessary re-renders), and security vulnerabilities including insecure deserialization and improper authentication
 - `Qodo`: race conditions, architectural drift, code duplication across repos, missing test coverage for edge cases, and validation of changes against acceptance criteria from project management tools
 - `Either`: correctness regressions, contract drift, CI breakage, and maintainability issues with clear delivery risk
 - `Unclear`: use only when the issue is real but tool attribution would be guesswork
@@ -204,6 +379,36 @@ Why it matters: <impact>
 Evidence: <diff-aware explanation>
 Recommended change: <specific change>
 Confidence: <high|medium|low>
+
+## Coverage Matrix
+| Area | Status | Notes |
+| --- | --- | --- |
+| Branch diff reviewed | <yes|no> | <notes> |
+| Base branch | <branch|unknown> | <notes> |
+| Working tree reviewed | <yes|no> | <notes> |
+| Changed file types | <status> | <notes> |
+| `.coderabbit.yaml` | <loaded|skipped|not available> | <notes> |
+| `.greptile/config.json` | <loaded|skipped|not available> | <notes> |
+| `.greptile/rules.md` | <loaded|skipped|not available> | <notes> |
+| `.greptile/files.json` | <loaded|skipped|not available> | <notes> |
+| `greptile.json` | <loaded|skipped|not available> | <notes> |
+| Root `.cursor/BUGBOT.md` | <loaded|skipped|not available> | <notes> |
+| Nested `.cursor/BUGBOT.md` | <loaded|skipped|not available> | <notes> |
+| Typecheck gate | <pass|fail|not run|not available> | <notes> |
+| Lint gate | <pass|fail|not run|not available> | <notes> |
+| Test gate | <pass|fail|not run|not available> | <notes> |
+| Build gate | <pass|fail|not run|not available> | <notes> |
+| Static/security gate | <pass|fail|not run|not available> | <notes> |
+| Imports context | <yes|no> | <notes> |
+| Callers context | <yes|no> | <notes> |
+| Tests context | <yes|no> | <notes> |
+| Schemas context | <yes|no> | <notes> |
+| Routes context | <yes|no> | <notes> |
+| Migrations context | <yes|no> | <notes> |
+| API/contracts context | <yes|no> | <notes> |
+| CI context | <yes|no> | <notes> |
+| Package scripts context | <yes|no> | <notes> |
+| Prior review context | <available|not available|other> | <notes> |
 
 ## Open Questions
 - <only if needed>

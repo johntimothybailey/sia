@@ -1,0 +1,16 @@
+diff --git a/prisma/schema.prisma b/prisma/schema.prisma
+index 1111111..2222222 100644
+--- a/prisma/schema.prisma
++++ b/prisma/schema.prisma
+@@ -20,6 +20,7 @@ model Project {
+   id        String @id @default(cuid())
+   name      String
++  status    String
+ }
+diff --git a/apps/web/app/projects/[id]/page.tsx b/apps/web/app/projects/[id]/page.tsx
+index 1111111..2222222 100644
+--- a/apps/web/app/projects/[id]/page.tsx
++++ b/apps/web/app/projects/[id]/page.tsx
+@@ -8,6 +8,7 @@ export default async function ProjectPage() {
+   return <ProjectDetails showStatus />;
+ }

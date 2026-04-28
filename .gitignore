@@ -45,3 +45,7 @@ Thumbs.db
 
 # Changesets
 .changeset/pre.json
+
+# Local agent/runtime state
+.omx/
+.codex/

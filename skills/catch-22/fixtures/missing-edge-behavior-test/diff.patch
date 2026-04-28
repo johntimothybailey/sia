@@ -1,0 +1,20 @@
+diff --git a/src/validators/parseWebhook.ts b/src/validators/parseWebhook.ts
+index 1111111..2222222 100644
+--- a/src/validators/parseWebhook.ts
++++ b/src/validators/parseWebhook.ts
+@@ -2,5 +2,5 @@ export function parseWebhook(payload) {
+-  if (!payload) throw new Error('invalid payload');
++  if (!payload) return {};
+   return JSON.parse(payload);
+ }
+diff --git a/src/validators/parseWebhook.test.ts b/src/validators/parseWebhook.test.ts
+index 1111111..2222222 100644
+--- a/src/validators/parseWebhook.test.ts
++++ b/src/validators/parseWebhook.test.ts
+@@ -1,6 +1,4 @@
+-it('rejects empty payloads', () => {
+-  expect(() => parseWebhook('')).toThrow();
+-});
+ it('parses a valid payload', () => {
+   expect(parseWebhook('{"ok":true}')).toEqual({ ok: true });
+ });

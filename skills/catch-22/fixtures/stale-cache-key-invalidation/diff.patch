@@ -1,0 +1,17 @@
+diff --git a/src/mutations/updateProject.ts b/src/mutations/updateProject.ts
+index 1111111..2222222 100644
+--- a/src/mutations/updateProject.ts
++++ b/src/mutations/updateProject.ts
+@@ -18,7 +18,7 @@ export const updateProject = trpc.project.update.useMutation({
+   onSuccess() {
+-    utils.project.public.list.invalidate();
++    utils.project.internal.list.invalidate();
+   },
+ });
+diff --git a/src/queries/useProjectList.ts b/src/queries/useProjectList.ts
+index 1111111..2222222 100644
+--- a/src/queries/useProjectList.ts
++++ b/src/queries/useProjectList.ts
+@@ -1,3 +1,3 @@
+-export const useProjectList = () => trpc.project.public.list.useQuery();
++export const useProjectList = () => trpc.project.public.list.useQuery();
