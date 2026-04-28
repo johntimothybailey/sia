@@ -1,0 +1,10 @@
+diff --git a/src/config/publishClientEnv.ts b/src/config/publishClientEnv.ts
+index 1111111..2222222 100644
+--- a/src/config/publishClientEnv.ts
++++ b/src/config/publishClientEnv.ts
+@@ -6,5 +6,6 @@ export function publishClientEnv() {
+   return {
+     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
++    SERVICE_API_KEY: process.env.SERVICE_API_KEY,
+   };
+ }

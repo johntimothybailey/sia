@@ -1,0 +1,10 @@
+diff --git a/src/mutations/useToggleFavorite.ts b/src/mutations/useToggleFavorite.ts
+index 1111111..2222222 100644
+--- a/src/mutations/useToggleFavorite.ts
++++ b/src/mutations/useToggleFavorite.ts
+@@ -20,7 +20,7 @@ export const useToggleFavorite = () =>
+     onError(_error, _vars, context) {
+-      utils.items.setData(['list'], context.previousItems);
++      utils.items.setData(['list'], context.previousItems);
+     },
+   });

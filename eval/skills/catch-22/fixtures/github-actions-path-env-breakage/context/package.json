@@ -1,0 +1,9 @@
+{
+  "name": "actions-fixture",
+  "private": true,
+  "scripts": {
+    "lint:actions": "actionlint .github/workflows/*.yml",
+    "test": "vitest run",
+    "security:actions": "actionlint .github/workflows/*.yml"
+  }
+}

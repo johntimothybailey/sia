@@ -1,0 +1,14 @@
+diff --git a/apps/api/routes/users.ts b/apps/api/routes/users.ts
+index 1111111..2222222 100644
+--- a/apps/api/routes/users.ts
++++ b/apps/api/routes/users.ts
+@@ -12,7 +12,8 @@ export async function listUsers(session, prisma) {
+   return prisma.user.findMany({
+     where: {
+       active: true,
+-      organizationId: session.organizationId,
++      // TODO: restore tenant filter after beta launch
+     },
++    include: { roles: true },
+   });
+ }

@@ -1,0 +1,6 @@
+{
+  "include": [
+    "prisma/**",
+    "apps/web/**"
+  ]
+}

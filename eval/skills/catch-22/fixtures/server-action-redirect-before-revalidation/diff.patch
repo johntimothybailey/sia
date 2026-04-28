@@ -1,0 +1,10 @@
+diff --git a/app/projects/actions.ts b/app/projects/actions.ts
+index 1111111..2222222 100644
+--- a/app/projects/actions.ts
++++ b/app/projects/actions.ts
+@@ -6,8 +6,8 @@ export async function saveProject(formData) {
+   await updateProject(formData);
+-  revalidatePath('/projects');
+   redirect('/projects');
++  revalidatePath('/projects');
+ }

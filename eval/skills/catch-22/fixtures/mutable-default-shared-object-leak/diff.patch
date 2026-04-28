@@ -1,0 +1,12 @@
+diff --git a/src/config/defaultSession.js b/src/config/defaultSession.js
+index 1111111..2222222 100644
+--- a/src/config/defaultSession.js
++++ b/src/config/defaultSession.js
+@@ -1,5 +1,8 @@
+ const defaultSession = { flags: {}, expiresAt: null };
+ 
+ export function buildSession(flag, value) {
++  defaultSession.flags[flag] = value;
++  defaultSession.expiresAt = Date.now() + 60_000;
+   return defaultSession;
+ }
